@@ -16,13 +16,18 @@
 
 > [!NOTE]
 > Before playing KOTH you must understand how the game works, please read and understand the guide here.
->[A Guide To King of the Hill](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
+> - [A Guide To King of the Hill](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
+> 
+> There are mistakes on some files for experiment purposes and some code issues so please double check the codes before running it on your testing environment.
+> If you have some recommendation please don't hesitate to reach me out.
 
 <br>
 
 ### Read and experiment with these.
 
-- [reverse-shell-generator](https://www.revshells.com/)
+- [Reverse-shell-generator](https://www.revshells.com/)
+
+- [Pentest-Monkey](https://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet)
 
 - [Linux Persistence Cheat-sheet](https://hackmag.com/security/persistence-cheatsheet)
 
