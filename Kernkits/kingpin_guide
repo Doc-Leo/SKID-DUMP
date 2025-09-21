@@ -4,13 +4,13 @@ Do not run on other people’s machines or any production systems.
 I usually run and test this in food-koth room, so if you want some few tweak I recommend 
 you running this in koth rooms like hacker-koth/food-koth.
 and for the reference of this kit:
-
 "https://github.com/djkimik/Aquinas-ctf-writeups/blob/master/tryhackme-koth/tools/kingmaker.c"
 
  compile before the delivery:
  gcc -static -o kingpin kingpin.c
   
  USAGE:
+ chmod +x kingpin
  ./kingpin
  
  HOW IT WORKS:
@@ -51,7 +51,7 @@ static char fake_systemd_name[] = "/lib/systemd/systemd-resolved";
 static char fake_kernel_thread[] = "[kworker/0:1H]";
 
  
- # ADVANCED HIDING TECHNIQUES
+ # HIDING TECHNIQUES
  ## This function implements several methods to hide the process from detection
   
 static void apply_advanced_hiding() {
