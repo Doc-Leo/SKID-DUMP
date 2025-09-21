@@ -22,21 +22,21 @@
 
 ### Read and experiment with these.
 
-[reverse-shell-generator](https://www.revshells.com/)
+- [reverse-shell-generator](https://www.revshells.com/)
 
-[Linux Persistence Cheat-sheet](https://hackmag.com/security/persistence-cheatsheet)
+- [Linux Persistence Cheat-sheet](https://hackmag.com/security/persistence-cheatsheet)
 
-[Linux Logging Guide](https://www.loggly.com/ultimate-guide/linux-logging-basics/)
+- [Linux Logging Guide](https://www.loggly.com/ultimate-guide/linux-logging-basics/)
 
-[Linux Shell Escape](https://fireshellsecurity.team/restricted-linux-shell-escaping-techniques/)
+- [Linux Shell Escape](https://fireshellsecurity.team/restricted-linux-shell-escaping-techniques/)
 
-[A guide to tty shell](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
+- [A guide to tty shell](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
 
-[SSH for dummies](https://linuxvox.com/blog/config-ssh-linux/)
+- [SSH for dummies](https://linuxvox.com/blog/config-ssh-linux/)
 
-[The art of rootkit](https://inferi.club/post/the-art-of-linux-kernel-rootkits)
+- [The art of rootkit](https://inferi.club/post/the-art-of-linux-kernel-rootkits)
 
-[Obfuscate your script!](https://www.baeldung.com/linux/bash-obfuscate-script)
+- [Obfuscate your script!](https://www.baeldung.com/linux/bash-obfuscate-script)
 
-[Metasploit-Unleashed](https://www.offsec.com/metasploit-unleashed/)
+- [Metasploit-Unleashed](https://www.offsec.com/metasploit-unleashed/)
 
