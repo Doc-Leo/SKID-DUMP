@@ -37,9 +37,13 @@
 
 - [Linux Logging Guide](https://www.loggly.com/ultimate-guide/linux-logging-basics/)
 
-- [Linux Shell Escape](https://fireshellsecurity.team/restricted-linux-shell-escaping-techniques/)
+- [Linux fireShell Escape](https://fireshellsecurity.team/restricted-linux-shell-escaping-techniques/)
 
 - [cve-2021-4034](https://blog.qualys.com/vulnerabilities-threat-research/2022/01/25/pwnkit-local-privilege-escalation-vulnerability-discovered-in-polkits-pkexec-cve-2021-4034)
+
+- [Rustscan](https://github.com/bee-san/RustScan)
+
+- [PayloadAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Bind%20Shell%20Cheatsheet.md)
 
 - [A guide to tty shell](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
 
