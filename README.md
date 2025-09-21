@@ -17,9 +17,11 @@
 > [!NOTE]
 > Before playing KOTH you must understand how the game works, please read and understand the guide here.
 > - [A Guide To King of the Hill](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
-> 
-> There are mistakes on some files for experiment purposes and some code issues so please double check the codes before running it on your test environment.
-> If you have some recommendation please dont hesitate to reach me out.
+>
+>  Some files contain intentional errors for testing and there are a few code issues.
+>  Please double check the code before running it in your test environment.
+>  If you have any recommendations, please reach out. 
+
 
 <br>
 
