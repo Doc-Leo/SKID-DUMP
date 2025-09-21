@@ -29,11 +29,17 @@
 
 - [Pentest-Monkey](https://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet)
 
+- [GTFOBins](https://gtfobins.github.io/)
+
+- [Hacktrix](https://book.hacktricks.wiki/)
+
 - [Linux Persistence Cheat-sheet](https://hackmag.com/security/persistence-cheatsheet)
 
 - [Linux Logging Guide](https://www.loggly.com/ultimate-guide/linux-logging-basics/)
 
 - [Linux Shell Escape](https://fireshellsecurity.team/restricted-linux-shell-escaping-techniques/)
+
+- [cve-2021-4034](https://blog.qualys.com/vulnerabilities-threat-research/2022/01/25/pwnkit-local-privilege-escalation-vulnerability-discovered-in-polkits-pkexec-cve-2021-4034)
 
 - [A guide to tty shell](https://www.linuxoperatingsystem.net/tty-command-line-in-linux/)
 
